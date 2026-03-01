@@ -1,6 +1,16 @@
--- requires neovim 12 (nightly version on windows)
--- pack update, 'gra' to remove package
 
+-- :::Bootstrap lazy:::
+local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+    local lazyrepo = 'https://github.com/folke/lazy.nvim.git'
+    local out = vim.fn.system { 'git', 'clone', '--filter=blob:none', '--branch=stable', lazyrepo, lazypath }
+    if vim.v.shell_error ~= 0 then
+        error('Error cloning lazy.nvim:\n' .. out)
+    end
+end ---@diagnostic disable-next-line: undefined-field
+vim.opt.rtp:prepend(lazypath)
+
+-- :::Options:::
 vim.cmd.colorscheme("unokai")
 
 vim.opt.number = true
@@ -21,6 +31,7 @@ vim.opt.smartcase = true
 
 vim.g.mapleader = " "
 
+-- ::Autocommands:::
 vim.api.nvim_create_autocmd("TextYankPost", {
     desc = "Highlight when yanking (copying) text",
     group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
@@ -40,6 +51,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     end,
 })
 
+-- :::Keybinds:::
 -- clear highlights
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
@@ -61,9 +73,9 @@ local function toggle_quickfix()
         vim.cmd("copen")
     end
 end
-
 vim.keymap.set("n", "<Leader>c", toggle_quickfix, { desc = "Toggle Quickfix List" })
 
+-- :::Plugins:::
 -- source: https://gist.github.com/smnatale/5372e4ef64b96e62a961eafc71cb670d
 vim.pack.add {
     { src = 'https://github.com/neovim/nvim-lspconfig' },
