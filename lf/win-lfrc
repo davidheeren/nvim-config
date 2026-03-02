@@ -1,18 +1,34 @@
 
+# source: https://github.com/gokcehan/lf/blob/master/etc/lfrc.ps1.example
 set shell pwsh
-# Allow the usage of $args inside shell commands
 set shellflag "-cwa"
-# Speed up Powershell by skipping the profile
 set shellopts "-nop"
+cmd open &&$Env:OPENER.Trim('"', ' ') "$Env:f"
+map i !&$Env:PAGER "$Env:f"
+map w $&$Env:SHELL
+cmd help !&$Env:lf -doc | &$Env:PAGER
+cmd maps !&$Env:lf -remote "query $Env:id maps" | &$Env:PAGER
+cmd nmaps !&$Env:lf -remote "query $Env:id nmaps" | &$Env:PAGER
+cmd vmaps !&$Env:lf -remote "query $Env:id vmaps" | &$Env:PAGER
+cmd cmaps !&$Env:lf -remote "query $Env:id cmaps" | &$Env:PAGER
+cmd cmds !&$Env:lf -remote "query $Env:id cmds" | &$Env:PAGER
 
+# My config
 set hidden true
 # set icons true
 
 map <enter> open
+map <space>
+
+map o :toggle; down
+map O :toggle; up
+
+map <space>d mkdir
+map <space>f mkfile
+map <space>c $echo "$Env:fx" | Set-Clipboard
 
 map e $nvim "$Env:f"
 
-# map <delete> $Import-Module PoshFunctions; Move-ToRecycleBin "$Env:fx"
 map <delete> trash
 map <s-delete> delete
 
@@ -29,4 +45,14 @@ cmd trash ${{
             [Microsoft.VisualBasic.FileIO.FileSystem]::DeleteFile($f, 'OnlyErrorDialogs', 'SendToRecycleBin')
         }
     }
+}}
+
+cmd mkdir ${{
+    $name = Read-Host "Directory name"
+    New-Item -ItemType Directory "$Env:PWD\$name"
+}}
+
+cmd mkfile ${{
+    $name = Read-Host "File name"
+    New-Item -ItemType File "$Env:PWD\$name"
 }}
