@@ -18,7 +18,7 @@ Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 # Start zoxide
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
-# Replace $HOME with ~
 function prompt {
-    "PS $(($executionContext.SessionState.Path.CurrentLocation.Path) -replace ([regex]::Escape($HOME)), '~')> "
+    Write-Host "PS $(($executionContext.SessionState.Path.CurrentLocation.Path) -replace ([regex]::Escape($HOME)), '~') >" -NoNewline -ForegroundColor Magenta
+    " "
 }
